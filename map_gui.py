@@ -7,9 +7,7 @@ except ImportError:
 """
 Program: A simple GUI for maps from dynamical systems written purely in python with the 
 		 above imported modules.
-Author: Gregor Simic
 Date: 21.10.2015
-Contact: gregor.simic@student.fmf.uni-lj.si
 """
 
 class Maps():
