@@ -133,6 +133,37 @@ class Maps():
 			#print(q,p)
 			return q,p
 
+class _Slider():
+	"""
+	Creates Axes and attaches Slider widgets to them
+	and populates them to the cont_of_slid.
+	"""
+	def_dim = np.array([0.17, 0.05, 0.65, 0.03])
+	del_dim = np.array([0.0, 0.04, 0.0, 0.0])
+	cont_of_slid={}
+	def __init__(self, owner, names):
+		self.owner=owner
+		self.f=owner.f
+		self.names=names
+		self.axcolor=owner.axcolor
+		self.create_sliders()
+	def create_sliders(self):
+		for i, name in enumerate(self.names):
+			dim = self.def_dim + i * self.del_dim
+			axes = self.f.add_axes(dim, axisbg = self.axcolor)
+			slider = Slider(axes, name, 0, 10, valinit=1)
+			slider.on_changed(self.update)
+			self.cont_of_slid[name] = (axes, slider)
+	def update(self, event):
+		self.owner.ax.clear()
+		self.owner.ax.set_title(self.owner.current_map)
+	def delete(self):
+		if len(self.cont_of_slid)==0: return None
+		for control_name in self.cont_of_slid:
+			axes_slider = self.cont_of_slid[control_name]
+			print(axes_slider[0], control_name)
+			self.f.delaxes(axes_slider[0])
+		self.cont_of_slid={}
 
 class GUI():
 	""" 
@@ -147,7 +178,7 @@ class GUI():
 	"""
 	color_pallete = ['b','r','g','c','y','w']
 	axcolor = 'lightgoldenrodyellow'
-	current_slider_container={}
+	control_container=[]
 	default_Map = 'HarperMap'
 
 	def __init__(self):
@@ -172,7 +203,8 @@ class GUI():
 		maps = self.maps.maps.keys()
 		self._menu_button_container = {}
 		for i, function in enumerate(maps):#Create a button for each function.
-			axes = self.f.add_axes([Menu_dim[0], Menu_dim[1]+ (i+1) * 0.05, Menu_dim[2], Menu_dim[3]])
+			axes = self.f.add_axes([Menu_dim[0], Menu_dim[1]+ (i+1) * 0.05, 
+									Menu_dim[2], Menu_dim[3]])
 			button = Button(axes, function)
 			cid = button.on_clicked(self.selected_function)
 			self._menu_button_container[function] = [axes, button, cid]
@@ -181,54 +213,43 @@ class GUI():
 	def prepare_interface(self, map):
 
 		self.current_map = map
-		self.current_constants = self.maps.slider[self.current_map]
-		#Create axes or basically the constant slider controls.
-		self.create_axes(self.maps.slider[self.current_map])
+		self.list_of_names = self.maps.slider[self.current_map]
+		self.create_controls(self.list_of_names)
 		self.ax.set_title(self.current_map)
 		
-	def create_axes(self, list_of_axes):
-		"""Creates Axes and attaches Slider widgets to them
-		and populates them to the current slider container dictionary.
+	def create_controls(self, names):
 		"""
-		#Default dimensions
-		def_dim = [0.17, 0.05, 0.65, 0.03]
-		del_bottom = 0.04
-
-		for i in range(len(list_of_axes)):
-			name = list_of_axes[i]
-
-			dim = def_dim
-			dim[1] += i * del_bottom #Raising axes one above the other
-
-			axes = self.f.add_axes(dim, axisbg = self.axcolor) # Creating the Axes.
-			slider = Slider(axes,name, 0, 10, valinit = 1) # Widget need the Axes
-
-			slider.on_changed(self._update) # Bind the widget to update function
-
-			self.current_slider_container[list_of_axes[i]] = [axes, slider]
-		return None
+		In the future not only sliders, but there will be 
+		steppers, so a better managment has to be written
+		soon.
+		"""
+		if len(names)==0:
+			return None
+		self.control_container.append(_Slider(self, names))
+		
 
 	def change_to_new_map(self, name_of_function):
 		"""This function changes the interface to the new map."""
 		#First clean the current control axes and plot
 		self.ax.clear()
-		self.clean_axes()
+		self.clean_controls()
 		self.prepare_interface(name_of_function)
 
-	def clean_axes(self):
+	def clean_controls(self):
 		"""This cleans the controls when a new map is chosen."""
-		for item in self.current_slider_container.items():
-			self.f.delaxes(item[1][0])
-		self.current_slider_container = {} #Basically deleting the axes and everything.
-
+		if len(self.control_container)==0: return None
+		for control_type in self.control_container:
+			control_type.delete()
+		self.control_container=[]
 	def _onclick(self, event):
 		if event.xdata==None or event.ydata==None: return None
 		if event.inaxes.__str__()!='Axes(0.125,0.25;0.775x0.65)': return None #I know this looks funny, but I don't know how to check on which object you clicked...
 		#print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f'%(event.button, event.x, event.y, event.xdata, event.ydata), event.inaxes)
 		#print(event)
 		data = {}
-		for const in self.current_constants:
-			data[const] = np.float(self.current_slider_container[const][1].val)
+		for name in self.list_of_names:
+			slider = self.control_container[0]
+			data[name] = np.float(slider.cont_of_slid[name][1].val)
 		data['q_0'] = [event.xdata]
 		data['p_0'] = [event.ydata]
 		#ax.clear()
@@ -239,12 +260,6 @@ class GUI():
 			self.ax.plot(q[i],p[i],'o',color = np.random.choice(self.color_pallete), ms=2.0, linewidth=1.2)
 		self.f.canvas.draw()
 
-	def _update(self, event):
-		"""
-		Upon selecting a value on a bar, this function just clears the plot.
-		"""
-		self.ax.clear()
-		self.ax.set_title(self.current_map)
 	def selected_function(self, event):
 		"""Because, you don't get the name of the Axes... you have to compare the dimensions with the other axes of the
 		menu buttons... How funny is that. Yeah, it's not.
