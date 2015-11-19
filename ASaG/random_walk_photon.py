@@ -53,7 +53,7 @@ class Random_Walk_Photon():
 		self._start()
 
 	def free_path(self, x, y):
-		if x>0.3 or y>0.3: _free_path = np.float64(1/15)
+		if x>0.3 and y>0.3: _free_path = np.float64(1/15)
 		else: _free_path = np.float64(1/25)
 		return _free_path
 	def _remove(self):
