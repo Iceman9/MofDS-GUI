@@ -37,7 +37,7 @@ class Random_Walk_Photon():
 			if velikost >= 1:
 				#The reason not normally append is that the lower indexes comes first
 				#Deleting the element at the normal index first cause the array to move
-				#making deleting at a higher inxed leed to index out of bounds.
+				#left, thus making deleting at a higher index lead to index out of bounds.
 				self._to_be_removed=[i]+self._to_be_removed 
 
 			else:
