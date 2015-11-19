@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from time import sleep
 
 class Random_Walk_Photon():
-	N=1000
-	Orig_num = 1000
+	N=10000
+	Orig_num = 10000
 	def __init__(self):
 		self.f = plt.figure()
 		self.ax, self.ax_2 = self.f.add_subplot(121), self.f.add_subplot(122)
@@ -45,7 +45,7 @@ class Random_Walk_Photon():
 		povprečje/=(self.N - len(self._to_be_removed))
 		self._remove()
 		self.ax.plot(self.pos_x, self.pos_y,'o', ms=1)
-		self.ax_2.plot(self.counter, povprečje, 'o', color='b')
+		self.ax_2.plot(np.sqrt(self.counter), povprečje, 'o', color='b')
 		#self.ax_2.plot(self.counter, len(self.pos_x)/self.Orig_num, 'o-', color='r')
 		self.counter+=1
 		self.f.canvas.draw()
@@ -53,7 +53,7 @@ class Random_Walk_Photon():
 		self._start()
 
 	def free_path(self, x, y):
-		if x>0.3 and y>0.3: _free_path = np.float64(1/15)
+		if x**2 + y**2>0.09: _free_path = np.float64(1/20)
 		else: _free_path = np.float64(1/25)
 		return _free_path
 	def _remove(self):
