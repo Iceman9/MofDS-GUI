@@ -62,7 +62,6 @@ class Random_Walk_Photon():
 			self.pos_y.remove(self.pos_y[el])
 			self.pos_x.append(0)
 			self.pos_y.append(0)
-		self.N-=len(self._to_be_removed)
 		self._to_be_removed=[]
 		return None
 
