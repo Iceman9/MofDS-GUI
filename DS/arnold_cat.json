@@ -1,0 +1,11 @@
+{
+    "name": "Arnold cat map",
+    "description": "Arnold cat map performed on a square image",
+    "type": "image",
+    "image": "cat.jpeg",
+    "variables": ["x", "y"],
+    "functions": {
+        "x" : "2 * x + y",
+        "y" : "x + y"
+    }
+}

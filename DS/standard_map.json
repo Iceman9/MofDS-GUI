@@ -1,0 +1,12 @@
+{
+    "name": "Standard map",
+    "description": "Standard map or Chirikov map",
+    "type": "standard",
+    "variables": ["q", "p"],
+    "constants": ["K"],
+    "functions":{
+        "q" : "q + p",
+        "p" : "p + K * sin(q)"
+    },
+    "mod": 6.283185307179586
+}
