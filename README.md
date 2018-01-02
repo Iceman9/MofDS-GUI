@@ -7,7 +7,7 @@ must be in root and are loaded in runtime.
 
 # WARNING
 
-The function expressions in side json files are first parsed with
+The function expressions inside json files are first parsed with
 ``parser.exprs`` from pythons standard module library and then ``eval``-ed
 when drawing new iterations or frames. (inside src/maps.py)
 
@@ -16,10 +16,10 @@ and I will not be responsible if damage comes from someone using untrusted
 sources.
 
 # Requirements
-matplotlib
-numpy
-pillow
-PyQt5
+- matplotlib
+- numpy
+- pillow
+- PyQt5
 
 # Running
 The main python file is DS_visual.py
