@@ -1,0 +1,12 @@
+{
+    "name": "Adjusted standard map",
+    "description": "Adjusted Chirikov map",
+    "type": "standard",
+    "variables": ["q", "p"],
+    "constants": ["K", "L"],
+    "functions":{
+        "q" : "q - K * sin(p)",
+        "p" : "p + L * sin(q)"
+    },
+    "mod": 6.283185307179586
+}

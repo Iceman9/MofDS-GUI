@@ -142,6 +142,7 @@ class StandardMap(Map):
 
             self.values['q'] = eval(self.functions['q']) % self.mod
             self.values['p'] = eval(self.functions['p']) % self.mod
+
             q[i] = self.values['q']
             p[i] = self.values['p']
 
