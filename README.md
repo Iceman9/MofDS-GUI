@@ -1,68 +1,30 @@
-MofDS-GUI
+# DS_visual
 
+A simple program for showing different maps. Currently the supported map types
+are standard maps and the Arnold cat maps. Maps are described inside .json
+files, so users can write their own map files or edit existing ones. The files
+must be in root and are loaded in runtime.
 
-Guide to the GUI:
-This GUI is written completely in Python. The following modules are
-installed:
--numpy
--matplotlib
-(otional pylab, scipy...)
+# WARNING
 
-To install them for respected OS, simply google it as it is very ea-
-sy to find guides.
+The function expressions in side json files are first parsed with
+``parser.exprs`` from pythons standard module library and then ``eval``-ed
+when drawing new iterations or frames. (inside src/maps.py)
 
+While this is more secure than just running ``eval``, caution is still advised
+and I will not be responsible if damage comes from someone using untrusted
+sources.
 
-Using the GUI is simple. On the left you have buttons for different
-built-in functions. To select the function, simply press the button
-AND you have to remove the cursor from the button [matplotlib logic].
+# Requirements
+matplotlib
+numpy
+pillow
+PyQt5
 
-Bottom of the plot are the controls of the constants that are in a 
-map function.
-
-Also it's best to have it in windowed full screen mode, because of the font.
-
-
-Adding a map:
-It is fairly simple all you have to edit is:
-
-#CONSTANTS FOR YOUR FUNCTION
-In the Maps class you have to add a key - value to the slider dictionary.
-This dictionary contains the names of your constants and additionaly it
-provides the number for your map.
-Example:
-
-'YourMapName' : [and array containing string either names or letters],
-
-
-#MODUL#
-The same for the modul dictionary. It simply contains the boundary of the
-phase space. Cation: Right now it provides the space from [0, <your_boundary>]
-Example:
-'YourMapName' : value,
-
-
-#REGISTERING IT IN
-
-in the Maps.__init__ you have to input an entry for the self.maps dictionary. It
-is basically linking YourMapName to self.YourMapFunction.
-
-Example:
-'YourMapName' : self.YourMapFunction
-
-
-#INPUTING THE FUNCTION
-
-In the class you have to create your function:
-
-def YourMapFunction(self, data):
-
-The data contains: q, p, your defined constants.
-To access them write:
-
-data['q'], data['p'], data['Name_of_a_Constant'],...
-
-Manipulate the data however you like within the boundaries of this program.
-The return values of this map must be: q,p
-
-
+# Running
+The main python file is DS_visual.py
+To run it:
+``` shell
+python3 DS_visual.py
+```
 

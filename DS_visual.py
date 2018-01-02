@@ -13,9 +13,9 @@ import sys
 import numpy as np
 from PIL import Image
 
-from maps import StandardMap, ImageMap
-from tab_widget import StandardMapTab, ImageMapTab
-from log import Log
+from src.maps import StandardMap, ImageMap
+from src.tab_widget import StandardMapTab, ImageMapTab
+from src.log import Log
 
 def loadMaps():
     files = glob.glob('*.json')
