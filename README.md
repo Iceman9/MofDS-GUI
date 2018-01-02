@@ -28,3 +28,6 @@ To run it:
 python3 DS_visual.py
 ```
 
+# Documentation
+
+For now in the images/ there are example pictures of the program.
