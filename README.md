@@ -18,6 +18,7 @@ sources.
 # Requirements
 - matplotlib
 - numpy
+- scipy
 - pillow
 - PyQt5
 - sphinx, for generating documentation.
