@@ -44,15 +44,14 @@ def loadMaps():
             logging.info('Reading image %s', imageFile)
             img = Image.open(imageFile)
             img.load()
-
-            imageArray = np.asarray(img, dtype="float32")
+            imgArray = np.asarray(img, dtype=np.uint8)
             img.close()
-            dim = imageArray.shape
+            dim = imgArray.shape
             if dim[0] != dim[1]:
                 logging.info('Picture is NOT square!')
                 continue
             logging.info('Setting image.')
-            m.setImage(imageArray)
+            m.setBaseImage(imgArray)
 
         else:
             logging.info('Unkown types: %s', TYPE)

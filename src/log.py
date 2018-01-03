@@ -53,7 +53,7 @@ class LogReceiver(QObject):
     """ Receives log messages from Logging and sys.stdout.
 
     A QObject (to be run in a QThread) which sits waiting for data to come
-    through a queue.Queue(). It blocks until data is available, and one it
+    through a queue.Queue(). It blocks until data is available, and once it
     has got something from the queue, it sends it to the "MainThread"
     by emitting a Qt Signal.
     """

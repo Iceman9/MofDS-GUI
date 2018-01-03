@@ -3,6 +3,7 @@ from PyQt5.QtCore import QObject, pyqtProperty, pyqtSlot
 import logging
 import parser
 import numpy as np
+from scipy.misc import imresize
 
 TRIFUNC = ['sin', 'cos']
 
@@ -99,7 +100,6 @@ class Map(QObject):
             logging.info('Successfully compiled %s for %s', funcStr, function)
             self.functions[function] = obj
 
-
     def map(self):
         """Virtual function to calculate the next frame of the map. Hardcoded
         to return two arrays, i.e., X and Y.
@@ -110,6 +110,7 @@ class Map(QObject):
 class StandardMap(Map):
     """Standard map as in the usual maps in q, p.
     """
+
     def __init__(self, parent=None):
         super(StandardMap, self).__init__(parent)
         self.type = 'standard'
@@ -148,35 +149,74 @@ class StandardMap(Map):
 
         return q, p
 
+
 class ImageMap(Map):
     """Maps that play with positional indexes in a NxN (square) image.
+
+    Attributes:
+        baseImage (ndarray): Original image (Matrix with shape (N, N, 3))
+        image (ndarray): Image of current state (map iterations, resizes...)
     """
 
     def __init__(self, parent=None):
         super(ImageMap, self).__init__(parent)
         self.type = 'image'
-        self.imageArray = None
+        self.baseImage = None
+        self.image = None
         self.shape = (0)
 
-    def setImage(self, img):
-        """Stores the image. Prerequisite is that the image should be a square
-        matrix.
+    def setBaseImage(self, img):
+        """Sets the original image or matrix.
         """
-        self.imageArray = img
-        self.shape = self.imageArray.shape
+        self.baseImage = img
+
+        self.setImage(self.baseImage)
+
+
+    def setImage(self, img):
+        """Sets a new image to the :attr:`image`. There are two copies of the
+        image or matrix. An original one and the one on which we perform
+        transformations.
+
+        Also the modulus value is set to the new size of the image.
+        """
+        self.image = np.array(img, copy=True)
+        self.shape = self.image.shape
         self.setMod(self.shape[0]) # Setting mod to the size or matrix.
 
     def map(self):
-        """Index switching in image array
+        """Perform the mapping on the current image. This means "shifting" the
+        indexes of each pixel around as set in the json file.
+        The attribute :attr:`image` is being changed.
+
+        Returns nothing as changes are done to the :attr:`image`.
         """
-        newImage = np.zeros(self.shape, dtype="float32")
+        newImage = np.zeros(self.shape, dtype=np.uint8)
         for i in range(self.mod):
             for j in range(self.mod):
                 x, y = i, j
                 new_X = eval(self.functions['x']) % self.mod
                 new_Y = eval(self.functions['y']) % self.mod
-                newImage[i][j] = self.imageArray[new_X][new_Y]
+                newImage[i][j] = self.image[new_X][new_Y]
 
-        self.imageArray = newImage
+        self.image = newImage
 
-        return newImage
+    def resize(self, newSize):
+        """Change the dimension of the image. In this case the argument is the
+        new size of the image matrix.
+
+        The resize is done on the original image, so as to not lose pixel
+        information.
+
+        Arguments:
+            newSize (int): New size for resizing the image.
+        """
+
+        size = int((newSize / self.baseImage.shape[0]) * 100)
+
+        self.setImage(imresize(self.baseImage, size))
+
+    def reset(self):
+        """Resets the attribute :attr:`image` to the original image.
+        """
+        self.setImage(self.baseImage)
