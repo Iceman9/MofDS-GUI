@@ -8,7 +8,7 @@ must be in root and are loaded in runtime.
 # WARNING
 
 The function expressions inside json files are first parsed with
-``parser.exprs`` from pythons standard module library and then ``eval``-ed
+``parser.expr`` from pythons standard module library and then ``eval``-ed
 when drawing new iterations or frames. (inside src/maps.py)
 
 While this is more secure than just running ``eval``, caution is still advised
