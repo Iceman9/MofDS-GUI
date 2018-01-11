@@ -140,6 +140,7 @@ class ImageMapTab(QWidget):
         self.AUTO_ITERATING = 0
         self.autoTimer = QTimer()
         self.autoTimer.timeout.connect(self.performIteration)
+        self.iteration = 0
 
     def setMap(self, map):
         """Sets the map object and perform other UI setup.
@@ -170,13 +171,21 @@ class ImageMapTab(QWidget):
         resizePush = QPushButton('Resize')
         resizePush.clicked.connect(self.resizeImage)
 
-        self.sizeLabel = QLabel('Size: ' + str(self.map.image.shape[0]))
+        sizeLabel = QLabel('Size: ')
+        self.sizeLabel = QLabel()
+        self.sizeLabel.setNum(self.map.image.shape[0])
+        iterationLabel = QLabel('Iteration: ')
+        self.iterationLabel = QLabel()
+        self.iterationLabel.setNum(self.iteration)
 
         self.layout().addWidget(self.timer, 1, 0, 1, -1)
         self.layout().addWidget(reset, 2, 0, 1, -1)
         self.layout().addWidget(self.resize, 3, 0)
         self.layout().addWidget(resizePush, 3, 1)
-        self.layout().addWidget(self.sizeLabel, 3, 2)
+        self.layout().addWidget(sizeLabel, 3, 2)
+        self.layout().addWidget(self.sizeLabel, 3, 3)
+        self.layout().addWidget(iterationLabel, 3, 4)
+        self.layout().addWidget(self.iterationLabel, 3, 5)
 
     def drawImage(self):
         pass
@@ -186,6 +195,8 @@ class ImageMapTab(QWidget):
         logging.info('Performing iteration for %s', self.map.name)
         self.map.map()
         self.draw(self.map.image)
+        self.iteration += 1
+        self.iterationLabel.setNum(self.iteration)
 
     def draw(self, img):
         logging.info('Drawing image for %s', self.map.name)
@@ -220,8 +231,11 @@ class ImageMapTab(QWidget):
         """
         logging.info('Reseting to original image for map %s', self.map.name)
         self.map.reset()
-        self.sizeLabel.setText('Size: ' + str(self.map.image.shape[0]))
+        self.sizeLabel.setNum(self.map.image.shape[0])
         self.draw(self.map.image)
+
+        self.iteration = 0
+        self.iterationLabel.setNum(0)
 
     def resizeImage(self):
         """Resizes the original image to a new image and draws it immediately.
@@ -232,5 +246,5 @@ class ImageMapTab(QWidget):
         value = self.resize.value()
 
         self.map.resize(value)
-        self.sizeLabel.setText('Size: ' + str(self.map.image.shape[0]))
+        self.sizeLabel.setNum(self.map.image.shape[0])
         self.draw(self.map.image)
