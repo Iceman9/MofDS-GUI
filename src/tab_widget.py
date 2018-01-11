@@ -248,3 +248,4 @@ class ImageMapTab(QWidget):
         self.map.resize(value)
         self.sizeLabel.setNum(self.map.image.shape[0])
         self.draw(self.map.image)
+        self.iterationLabel.setNum(0)
